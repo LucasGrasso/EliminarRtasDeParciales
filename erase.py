@@ -1,7 +1,32 @@
+from typing import Set
+
 from fitz import Document, Rect
+from PIL import Image
 
 
-def erase_answers(doc: Document, search_strings: set[str]) -> Document:
+def erase_highlights(image: Image.Image) -> Image.Image:
+    """Convert yellow pixels to white and saves it in the same path.
+    Args:
+        image (Image): PIL image.
+
+    Returns:
+        Image: PIL image without yellow and red pixels.
+    """
+
+    for x in range(image.width):
+        for y in range(image.height):
+            pixel_color = image.getpixel((x, y))
+            if (120, 65, 1) <= pixel_color <= (255, 255, 150) or (
+                200,
+                0,
+                0,
+            ) <= pixel_color <= (255, 0, 0):
+                image.putpixel((x, y), (255, 255, 255))  # Set pixel to white
+
+    return image
+
+
+def erase_answers(doc: Document, search_strings: Set[str]) -> Document:
     """Erase the answers of the true/false choice questions.
     Args:
         doc (fitz.Document): PyMuPDF document.

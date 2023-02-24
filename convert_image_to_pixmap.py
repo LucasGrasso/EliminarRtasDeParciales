@@ -1,10 +1,11 @@
 from io import BytesIO
+from typing import Tuple
 
 from fitz import Pixmap, Rect
 from PIL import Image
 
 
-def convert_image_to_pixmap(image: Image.Image) -> tuple[Pixmap, Rect]:
+def convert_image_to_pixmap(image: Image.Image) -> Tuple[Pixmap, Rect]:
     """Converts a PIL image to a PyMuPDF pixmap.
     Args:
         image (Image): PIL image.

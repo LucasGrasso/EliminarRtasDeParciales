@@ -1,10 +1,12 @@
-from fitz import Document
+from typing import List
+
+from fitz import Document, Page
 from PIL import Image
 
 from convert_image_to_pixmap import convert_image_to_pixmap
 
 
-def convert_images_to_pdf(image_array: list[Image.Image]) -> Document:
+def convert_images_to_pdf(image_array: List[Image.Image]) -> Document:
     """Converts a list of PIL images to a pdf file.
     Args:
         image_array (list[Image]): List of PIL images.
@@ -16,7 +18,7 @@ def convert_images_to_pdf(image_array: list[Image.Image]) -> Document:
     doc = Document()
     for image in image_array:
         (pix, rect) = convert_image_to_pixmap(image)
-        page = doc.new_page(width=rect.width, height=rect.height)
+        page: Page = doc.new_page(width=rect.width, height=rect.height)
         page.insert_image(rect, pixmap=pix)
         pix = None
 

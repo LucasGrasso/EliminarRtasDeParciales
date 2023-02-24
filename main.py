@@ -1,13 +1,14 @@
 import json
 from io import BytesIO
+from typing import List
 
 import fitz
 from fastapi import FastAPI, File, Form, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from convert_images_to_pdf import convert_images_to_pdf
-from erase_answers import erase_answers as erase_doc_answers
-from erase_highlights import erase_highlights
+from erase import erase_answers as erase_doc_answers
+from erase import erase_highlights
 from images_from_pages import images_from_pages
 
 app: FastAPI = FastAPI()
@@ -33,7 +34,7 @@ def root():
 
 @app.post("/eraseAnswers")
 async def erase_answers(
-    file: UploadFile = File(...), search_strings: list[str] = Form(...)
+    file: UploadFile = File(...), search_strings: List[str] = Form(...)
 ):
     """Erase answers from a PDF file.
 
