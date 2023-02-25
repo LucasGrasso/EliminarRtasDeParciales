@@ -1,4 +1,3 @@
-import json
 from io import BytesIO
 from typing import List
 
@@ -64,16 +63,7 @@ async def erase_answers(
         Response: The PDF file with the answers erased.
     """
 
-    if not file:
-        return {"error": "No file provided"}
-    if not search_strings:
-        return {"error": "No search strings provided"}
-
-    search_strings_set: set[str] = set()
-    try:
-        search_strings_set = set(json.loads(search_strings[0]))
-    except json.decoder.JSONDecodeError as exception:
-        return {"error": f"Error while reading the search strings: {exception}"}
+    search_strings_set: set[str] = set(search_strings)
 
     # Create a PyMuPDF document object from the byte buffer
     try:
@@ -83,6 +73,7 @@ async def erase_answers(
         if not filename.endswith(".pdf"):
             return {"error": "File is not a PDF"}
         filename = filename.split(".")[0].replace(" ", "_")
+        # Convert the file to a byte buffer, then to a PyMuPDF document object
         pdf_bytes = await file.read()
         pdf_stream = BytesIO(pdf_bytes)
         doc: fitz.Document = fitz.Document(stream=pdf_stream, filetype="pdf")
@@ -90,6 +81,7 @@ async def erase_answers(
         if not doc:
             return {"error": "Error while reading the file"}
 
+        # Erase the answers
         doc = erase_doc_answers(doc, search_strings_set)
 
         page_images = images_from_pages(doc=doc)
@@ -99,6 +91,7 @@ async def erase_answers(
 
         doc = convert_images_to_pdf(image_array=page_images)
 
+        # Return the PDF file as a buffer, then as a response
         buffer = BytesIO()
         doc.save(buffer)
         buffer.seek(0)
