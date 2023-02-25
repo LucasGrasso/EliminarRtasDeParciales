@@ -38,7 +38,7 @@ def root():
             <title>Eliminar Respuestas de Parciales</title>
         </head>
         <body>
-            <h1>Hola Estudiantes!</h1>
+            <h1>¡Hola Estudiantes!</h1>
             <span> Subí tu parcial y te devuelvo el mismo parcial pero sin las respuestas.</span>
             <span>Para usarlo, tenés que subir un archivo PDF y escribir las respuestas que querés borrar.</span>
             <span>Por ejemplo, si querés borrar las respuestas que sean X, V o F, tenés que escribir "X,V,F" (sin las comillas).</span>
