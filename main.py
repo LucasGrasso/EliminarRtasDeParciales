@@ -5,6 +5,7 @@ from typing import List
 import fitz
 from fastapi import FastAPI, File, Form, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 
 from convert_images_to_pdf import convert_images_to_pdf
 from erase import erase_answers as erase_doc_answers
@@ -16,6 +17,8 @@ app: FastAPI = FastAPI()
 origins = [
     "http://borrar.lucasgrasso.com.ar",
     "https://borraryestudi.ar",
+    "https://api.eliminarrtas.lucasgrasso.com.ar/",
+    "https://eliminarrtasdeparciales.onrender.com/",
 ]
 
 app.add_middleware(
@@ -27,9 +30,24 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def root():
-    return {"Hola": "Estudiantes"}
+    """Returns the HTML page for the root path."""
+    return """
+    <html>
+        <head>
+            <title>Eliminar Respuestas de Parciales</title>
+        </head>
+        <body>
+            <h1>Hola Estudiantes!</h1>
+            <span> Subí tu parcial y te devuelvo el mismo parcial pero sin las respuestas.</span>
+            <span>Para usarlo, tenés que subir un archivo PDF y escribir las respuestas que querés borrar.</span>
+            <span>Por ejemplo, si querés borrar las respuestas que sean X, V o F, tenés que escribir "X,V,F" (sin las comillas).</span>
+            <span>El codigo borra automaticamente el subrayado amarillo.</span>
+            <h1>¡Suerte rindiendo!</h1>
+        </body>
+    </html>
+    """
 
 
 @app.post("/eraseAnswers")
@@ -61,7 +79,7 @@ async def erase_answers(
     try:
         filename: str | None = file.filename
         if not filename:
-            return {"error": "Error while reading the file"}
+            return {"error": "File has no filename"}
         if not filename.endswith(".pdf"):
             return {"error": "File is not a PDF"}
         filename = filename.split(".")[0].replace(" ", "_")
