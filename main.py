@@ -104,7 +104,9 @@ async def erase_answers(
         buffer = BytesIO()
         doc.save(buffer)
         buffer.seek(0)
-        headers = {"Content-Disposition": f'inline; filename="{filename}.pdf"'}
+        headers = {
+            "Content-Disposition": f'attachment; filename="{filename}_SinCorrecciones.pdf"'
+        }
 
     except Exception as exception:
         raise HTTPException(status_code=500, detail=str(exception)) from exception
