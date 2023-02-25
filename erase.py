@@ -35,6 +35,8 @@ def erase_answers(doc: Document, search_strings: Set[str]) -> Document:
         fitz.Document: PyMuPDF document with the answers erased.
     """
 
+    max_str_len: int = len(max(search_strings))
+
     # Loop through the pages of the PDF file
     for page in doc:
         # Search for the letters you're interested in
@@ -47,7 +49,7 @@ def erase_answers(doc: Document, search_strings: Set[str]) -> Document:
             for lines in block["lines"]:
                 for words in lines["spans"]:
                     if any(word in words["text"] for word in search_strings):
-                        if len(words["text"]) <= 5:
+                        if len(words["text"]) <= max_str_len:
                             boxes.append(words["bbox"])
 
         if len(boxes) != 0:
