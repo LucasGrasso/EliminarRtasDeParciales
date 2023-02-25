@@ -2,7 +2,7 @@ from io import BytesIO
 from typing import List
 
 import fitz
-from fastapi import FastAPI, File, Form, Response, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
@@ -49,15 +49,23 @@ def root():
     """
 
 
-@app.post("/eraseAnswers")
+@app.post(
+    "/eraseAnswers",
+    responses={
+        200: {
+            "content": {"application/pdf": {}},
+            "description": "Returns the PDF file with the answers erased.",
+        },
+    },
+)
 async def erase_answers(
     file: UploadFile = File(...), search_strings: List[str] = Form(...)
 ):
     """Erase answers from a PDF file.
 
     Args:
-        file (UploadFile, optional): The PDF file. Defaults to File(...).
-        search_strings (list[str], optional): The search strings. Must be an array of type['"a","b","c"'] Defaults to Form(...).
+        file (UploadFile): The PDF file.
+        search_strings (list[str]): The search strings. Later converted to a set.
 
     Returns:
         Response: The PDF file with the answers erased.
@@ -66,21 +74,22 @@ async def erase_answers(
     search_strings_set: set[str] = set(search_strings)
 
     # Create a PyMuPDF document object from the byte buffer
+
+    filename: str | None = file.filename
+    if not filename:
+        raise HTTPException(status_code=404, detail="File has no filename")
+    if not filename.endswith(".pdf"):
+        raise HTTPException(status_code=415, detail="File is not a PDF")
+    filename = filename.split(".")[0].replace(" ", "_")
+    # Convert the file to a byte buffer, then to a PyMuPDF document object
+    pdf_bytes = await file.read()
+    pdf_stream = BytesIO(pdf_bytes)
+    doc: fitz.Document = fitz.Document(stream=pdf_stream, filetype="pdf")
+
+    if not doc:
+        raise HTTPException(status_code=422, detail="Error while reading the pdf")
+
     try:
-        filename: str | None = file.filename
-        if not filename:
-            return {"error": "File has no filename"}
-        if not filename.endswith(".pdf"):
-            return {"error": "File is not a PDF"}
-        filename = filename.split(".")[0].replace(" ", "_")
-        # Convert the file to a byte buffer, then to a PyMuPDF document object
-        pdf_bytes = await file.read()
-        pdf_stream = BytesIO(pdf_bytes)
-        doc: fitz.Document = fitz.Document(stream=pdf_stream, filetype="pdf")
-
-        if not doc:
-            return {"error": "Error while reading the file"}
-
         # Erase the answers
         doc = erase_doc_answers(doc, search_strings_set)
 
@@ -97,9 +106,8 @@ async def erase_answers(
         buffer.seek(0)
         headers = {"Content-Disposition": f'inline; filename="{filename}.pdf"'}
 
-        return Response(
-            buffer.getvalue(), headers=headers, media_type="application/pdf"
-        )
-
     except Exception as exception:
-        return {"error": f"Error while reading the file: {exception}"}
+        raise HTTPException(status_code=500, detail=str(exception)) from exception
+
+    print(f"Converted {filename} correctly")
+    return Response(buffer.getvalue(), headers=headers, media_type="application/pdf")
