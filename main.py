@@ -16,10 +16,10 @@ app: FastAPI = FastAPI()
 testing: bool = False
 
 origins = [
-    "https://borraryestudiar.lucasgrasso.com.ar/",
+    "https://borraryestudiar.lucasgrasso.com.ar",
     "https://borraryestudi.ar",
-    "https://api.eliminarrtas.lucasgrasso.com.ar/",
-    "https://eliminarrtasdeparciales.onrender.com/",
+    "https://api.eliminarrtas.lucasgrasso.com.ar",
+    "https://eliminarrtasdeparciales.onrender.com",
 ]
 
 
