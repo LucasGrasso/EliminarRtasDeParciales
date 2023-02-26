@@ -15,7 +15,7 @@ def erase_highlights(image: Image.Image) -> Image.Image:
     for x in range(image.width):
         for y in range(image.height):
             pixel_color = image.getpixel((x, y))
-            if (125, 125, 0) <= pixel_color <= (255, 255, 0) or (
+            if (120, 65, 1) <= pixel_color <= (255, 255, 150) or (
                 200,
                 0,
                 0,
