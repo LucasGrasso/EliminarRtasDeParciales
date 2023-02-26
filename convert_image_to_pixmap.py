@@ -15,7 +15,7 @@ def convert_image_to_pixmap(image: Image.Image) -> Tuple[Pixmap, Rect]:
     """
 
     img_byte_arr = BytesIO()
-    image.save(img_byte_arr, format="PNG")
+    image.save(img_byte_arr, format="JPEG", optimize=True)
     img_byte_arr = img_byte_arr.getvalue()
     rect = Rect(0, 0, image.width, image.height)
     pix = Pixmap(img_byte_arr)

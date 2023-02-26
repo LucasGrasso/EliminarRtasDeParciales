@@ -7,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
 from convert_images_to_pdf import convert_images_to_pdf
-from erase import erase_answers as erase_doc_answers
-from erase import erase_highlights
+from erase_answers import erase_answers as erase_doc_answers
+from erase_highlights import erase_highlights
 from images_from_pages import images_from_pages
 
 app: FastAPI = FastAPI()
@@ -18,6 +18,7 @@ origins = [
     "https://borraryestudi.ar",
     "https://api.eliminarrtas.lucasgrasso.com.ar/",
     "https://eliminarrtasdeparciales.onrender.com/",
+    "http://localhost:5173/",
 ]
 
 app.add_middleware(
