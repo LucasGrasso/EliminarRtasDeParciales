@@ -13,17 +13,19 @@ from images_from_pages import images_from_pages
 
 app: FastAPI = FastAPI()
 
+testing: bool = False
+
 origins = [
-    "http://borrar.lucasgrasso.com.ar",
+    "https://borraryestudiar.lucasgrasso.com.ar/",
     "https://borraryestudi.ar",
     "https://api.eliminarrtas.lucasgrasso.com.ar/",
     "https://eliminarrtasdeparciales.onrender.com/",
-    "http://localhost:5173/",
 ]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins if not testing else ["*"],
     allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
@@ -58,6 +60,7 @@ def root():
             "description": "Returns the PDF file with the answers erased.",
         },
     },
+    response_class=Response,
 )
 async def erase_answers(
     file: UploadFile = File(...), search_strings: List[str] = Form(...)
