@@ -113,7 +113,7 @@ def erase_answers(doc: Document, search_strings: Set[str]) -> Document:
                     decoded_text = decode_TJ_text(
                         b"".join(bytestring.split(b"TJ")).decode("utf-8")
                     )
-                    if decoded_text in search_strings:
+                    if any(word in decoded_text for word in search_strings):
                         stream = stream.replace(bytestring, b"() 4.0 TJ")
                         doc.update_stream(xref, stream)
                 except UnicodeDecodeError:
