@@ -3,6 +3,7 @@ from typing import List, Set
 
 import fitz
 from sanic import Sanic, exceptions, html, response
+from sanic_cors import CORS, cross_origin
 
 from convert_images_to_pdf import convert_images_to_pdf
 from erase_answers import erase_answers as erase_doc_answers
@@ -10,6 +11,17 @@ from erase_highlights import erase_highlights
 from images_from_pages import images_from_pages
 
 app = Sanic(name="borrar-respuestas-de-Parciales")
+cors = CORS(
+    app,
+    resources={
+        r"/*": {
+            "origins": [
+                "https://borraryestudiar.lucasgrasso.com.ar/",
+                "https://api.eliminarrtas.lucasgrasso.com.ar/",
+            ]
+        }
+    },
+)
 
 
 @app.route("/", methods=["GET"])
