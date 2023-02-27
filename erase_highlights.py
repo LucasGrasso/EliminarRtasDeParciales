@@ -1,9 +1,7 @@
-from typing import Tuple
-
-from PIL import Image
+from PIL.Image import Image
 
 
-def erase_highlights(image: Image.Image) -> Image.Image:
+async def erase_highlights(image: Image) -> Image:
     """Convert yellow pixels to white and saves it in the same path.
     Args:
         image (Image): PIL image.
@@ -14,8 +12,8 @@ def erase_highlights(image: Image.Image) -> Image.Image:
 
     for x in range(image.width):
         for y in range(image.height):
-            pixel_color = image.getpixel((x, y))
-            if (120, 65, 1) <= pixel_color <= (255, 255, 150):
+            (r, g, b) = image.getpixel((x, y))
+            if r > 150 and g > 150 and b < 150:
                 image.putpixel((x, y), (255, 255, 255))  # Set pixel to white
 
     return image
