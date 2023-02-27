@@ -3,7 +3,7 @@ from typing import List, Set, Tuple
 
 import fitz
 from PIL import Image
-from sanic import Sanic, exceptions, html, response
+from sanic import Sanic, exceptions, response, text
 from sanic_cors import CORS
 
 app = Sanic(name="borrar-respuestas-de-Parciales")
@@ -243,75 +243,7 @@ def images_from_pages(doc: fitz.Document) -> List[Image.Image]:
 
 @app.route("/", methods=["GET"])
 async def index(req):
-    return html(
-        """
-        <!DOCTYPE html>
-        <html lang="es">
-
-        <head>
-            <meta charset="UTF-8" />
-            <link rel="icon" type="image/png" href="https://borraryestudiar.lucasgrasso.com.ar/logo.png" />
-            <title>Borrar Respuestas de Parciales</title>
-            <meta name="description" content="Borrar Respuestas de Parciales" />
-            <meta name="author" content="Lucas Grasso Ramos" />
-        </head>
-
-        <style>
-            html,
-            body {
-                scroll-behavior: smooth;
-                height: 100vh;
-                overflow-y: hidden;
-            }
-
-            body {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-                line-height: 1.5;
-                font-weight: 400;
-
-                color-scheme: light dark;
-                color: rgba(255, 255, 255, 0.87);
-                background-color: #242424;
-
-                font-synthesis: none;
-                text-rendering: optimizeLegibility;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                -webkit-text-size-adjust: 100%;
-            }
-
-            h1 {
-                font-size: 3.2em;
-                line-height: 1.1;
-            }
-
-            .container {
-                text-align: center;
-            }
-
-            @media (prefers-color-scheme: light) {
-                body {
-                    color: #213547;
-                    background-color: #F3F3F3;
-                }
-            }
-        </style>
-
-        <body>
-            <div class="container">
-                <img src="https://borraryestudiar.lucasgrasso.com.ar/logo.png" alt="Logo" width="200" height="200" />
-                <h1>
-                    ¡Hola Estudiantes!
-                </h1>
-            </div>
-        </body>
-
-        </html>
-        """
-    )
+    return text("Hello World!")
 
 
 @app.route("/eraseAnswers", methods=["POST"])
