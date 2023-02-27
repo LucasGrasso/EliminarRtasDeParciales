@@ -15,11 +15,11 @@ def convert_images_to_pdf(image_array: List[Image.Image]) -> Document:
         str: Path to the new pdf file.
     """
 
-    doc = Document()
+    _doc = Document()
     for image in image_array:
         (pix, rect) = convert_image_to_pixmap(image)
-        page: Page = doc.new_page(width=rect.width, height=rect.height)
+        page: Page = _doc.new_page(width=rect.width, height=rect.height)
         page.insert_image(rect, pixmap=pix)
         pix = None
 
-    return doc
+    return _doc
