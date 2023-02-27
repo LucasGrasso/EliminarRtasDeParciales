@@ -99,7 +99,10 @@ def erase_answers(doc: Document, search_strings: Set[str]) -> Document:
         fitz.Document: PyMuPDF document with the answers erased.
     """
 
-    max_str_len: int = len(max(search_strings))
+    max_str_len: int = 0
+    for search_string in search_strings:
+        if len(search_string) > max_str_len:
+            max_str_len = len(search_string)
 
     # Loop through the pages of the PDF file
     for page in doc:
@@ -113,7 +116,9 @@ def erase_answers(doc: Document, search_strings: Set[str]) -> Document:
                     decoded_text = decode_TJ_text(
                         b"".join(bytestring.split(b"TJ")).decode("utf-8")
                     )
-                    if decoded_text in search_strings:
+                    if any(word in decoded_text for word in search_strings):
+                        if len(decoded_text) > max_str_len:
+                            continue
                         stream = stream.replace(bytestring, b"() 4.0 TJ")
                         doc.update_stream(xref, stream)
                 except UnicodeDecodeError:
