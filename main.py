@@ -3,7 +3,7 @@ from typing import List, Set
 
 import fitz
 from sanic import Sanic, exceptions, html, response
-from sanic_cors import CORS, cross_origin
+from sanic_cors import CORS
 
 from convert_images_to_pdf import convert_images_to_pdf
 from erase_answers import erase_answers as erase_doc_answers
@@ -16,8 +16,8 @@ cors = CORS(
     resources={
         r"/*": {
             "origins": [
-                "https://borraryestudiar.lucasgrasso.com.ar/",
-                "https://api.eliminarrtas.lucasgrasso.com.ar/",
+                "https://borraryestudiar.lucasgrasso.com.ar",
+                "https://api.eliminarrtas.lucasgrasso.com.ar",
             ]
         }
     },
