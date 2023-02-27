@@ -1,12 +1,12 @@
 from typing import List
 
 from fitz import Document, Matrix
-from PIL import Image
+from PIL.Image import Image, frombuffer
 
-MATRIX = Matrix(2.0, 2.0)
+MATRIX = Matrix(1.8, 1.8)
 
 
-def images_from_pages(doc: Document) -> List[Image.Image]:
+def images_from_pages(doc: Document) -> List[Image]:
     """Extract images from pdf file and save them in the output folder.
     Args:
         pdf_path (str): Path to the pdf file.
@@ -16,9 +16,9 @@ def images_from_pages(doc: Document) -> List[Image.Image]:
 
     res = []
     for page in doc:  # iterate through the pages
-        pix = page.get_pixmap(matrix = MATRIX)  # render page to an image
+        pix = page.get_pixmap(matrix=MATRIX)  # type: ignore # render page to an image
         res.append(
-            Image.frombuffer(
+            frombuffer(
                 "RGB",
                 (pix.width, pix.height),
                 pix.samples,

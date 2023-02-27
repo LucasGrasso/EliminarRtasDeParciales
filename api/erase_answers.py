@@ -1,12 +1,6 @@
-from typing import List, Set, Tuple
+from typing import List, Set
 
 from fitz import Document, Rect
-from PIL import Image
-
-
-def rgb2L(colors=Tuple[int, int, int]) -> int:
-    R, G, B = colors
-    return int(R * 299 / 1000 + G * 587 / 1000 + B * 114 / 1000)
 
 
 def get_sub_bytestrings_between(string: bytes, start: bytes, end: bytes) -> List[bytes]:
@@ -90,7 +84,7 @@ def decode_TJ_text(text: str) -> str:
     return "".join(substrings)
 
 
-def erase_answers(doc: Document, search_strings: Set[str]) -> Document:
+async def erase_answers(_doc: Document, search_strings: Set[str]) -> Document:
     """Erase the answers of the true/false choice questions.
     Args:
         doc (fitz.Document): PyMuPDF document.
@@ -99,12 +93,15 @@ def erase_answers(doc: Document, search_strings: Set[str]) -> Document:
         fitz.Document: PyMuPDF document with the answers erased.
     """
 
-    max_str_len: int = len(max(search_strings))
+    max_str_len: int = 0
+    for search_string in search_strings:
+        if len(search_string) > max_str_len:
+            max_str_len = len(search_string)
 
     # Loop through the pages of the PDF file
-    for page in doc:
+    for page in _doc:
         for xref in page.get_contents():
-            stream = doc.xref_stream(xref)
+            stream = _doc.xref_stream(xref)
             bytestring_array: List[bytes] = get_sub_bytestrings_between(
                 stream, b"BT", b"ET"
             )
@@ -117,8 +114,8 @@ def erase_answers(doc: Document, search_strings: Set[str]) -> Document:
                         if len(decoded_text) > max_str_len:
                             continue
                         stream = stream.replace(bytestring, b"() 0.0 TJ")
-                        doc.update_stream(xref, stream)
+                        _doc.update_stream(xref, stream)
                 except UnicodeDecodeError:
                     continue
 
-    return doc
+    return _doc

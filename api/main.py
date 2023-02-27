@@ -26,7 +26,7 @@ async def erase_answers(req):
     file_buffer.seek(0)
     doc = fitz.Document(stream=file_buffer, filetype="pdf")
 
-    search_strings: List[str] = req.form.get("search_strings")
+    search_strings: List[str] = req.form.getlist("search_strings")
 
     if not search_strings:
         raise exceptions.NotFound("No search strings were provided")
@@ -34,13 +34,13 @@ async def erase_answers(req):
     set_search_strings: Set[str] = set(search_strings)
 
     try:
-        doc = erase_doc_answers(doc, set_search_strings)
+        doc = await erase_doc_answers(doc, set_search_strings)
         page_images = images_from_pages(doc=doc)
 
         for i, image in enumerate(page_images):
-            page_images[i] = erase_highlights(image)
+            page_images[i] = await erase_highlights(image)
 
-        doc = convert_images_to_pdf(image_array=page_images)
+        doc = await convert_images_to_pdf(image_array=page_images)
 
         # Return the PDF file as a buffer, then as a response
         buffer = BytesIO()
@@ -57,7 +57,8 @@ async def erase_answers(req):
         )
 
     except Exception as e:
-        raise exceptions.ServerError(f"An error occurred: {e}")
+        doc.close()
+        raise exceptions.ServerError(message=str(e))
 
 
 if __name__ == "__main__":
