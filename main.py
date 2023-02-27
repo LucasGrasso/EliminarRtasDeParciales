@@ -14,12 +14,13 @@ app = Sanic(name="borrar-respuestas-de-Parciales")
 cors = CORS(
     app,
     resources={
-        r"/*": {
+        "/": {"origins": "*"},
+        "/eraseAnswers": {
             "origins": [
                 "https://borraryestudiar.lucasgrasso.com.ar",
                 "https://api.eliminarrtas.lucasgrasso.com.ar",
             ]
-        }
+        },
     },
 )
 
