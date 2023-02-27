@@ -13,7 +13,7 @@ app = Sanic(name="borrar-respuestas-de-Parciales")
 
 
 @app.route("/", methods=["GET"])
-async def index():
+async def index(req):
     return html(
         """
         <!DOCTYPE html>
