@@ -3,6 +3,7 @@ from typing import List, Set
 
 import fitz
 from sanic import Sanic, exceptions, html, response
+from sanic.log import logger
 from sanic_cors import CORS
 
 from convert_images_to_pdf import convert_images_to_pdf
@@ -119,6 +120,8 @@ async def erase_answers(req):
 
     set_search_strings: Set[str] = set(search_strings)
 
+    logger.info(f"Processing {filename}.pdf with search strings: {set_search_strings}")
+
     try:
         doc = await erase_doc_answers(doc, set_search_strings)
         page_images = images_from_pages(doc=doc)
@@ -133,6 +136,7 @@ async def erase_answers(req):
         doc.save(buffer, garbage=3, deflate=True, clean=True, deflate_images=True)
         doc.close()
         buffer.seek(0)
+        logger.info(f"{filename}_SinCorrecciones.pdf created successfully")
         return response.raw(
             buffer.getvalue(),
             headers={
@@ -144,6 +148,7 @@ async def erase_answers(req):
 
     except Exception as e:
         doc.close()
+        logger.error(str(e))
         raise exceptions.ServerError(message=str(e))
 
 
